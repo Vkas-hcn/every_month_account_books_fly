@@ -1,32 +1,40 @@
-import 'package:every_month_account_books_fly/MainAccount.dart';
-import 'package:every_month_account_books_fly/utils/LocalStorage.dart';
+import 'package:every_month_account_books_fly/Start.dart';
+import 'package:every_month_account_books_fly/ad/CCCllok.dart';
+import 'package:every_month_account_books_fly/ad/ShowAdFun.dart';
+import 'package:every_month_account_books_fly/utils/ThisUtils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 
-void main() async{
-  runApp(const Start());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MultiProvider(providers: [
+      Provider<ShowAdFun>(
+        create: (_) => ShowAdFun(),
+      ),
+      ChangeNotifierProvider(create: (_) => CCCllok()),
+    ], child: const MyApp()));
+  });
 }
 
-class Start extends StatelessWidget {
-  const Start({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      navigatorKey: ThisUtils.navigatorKey, // 设置全局 navigatorKey
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -36,52 +44,31 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    jumpToNextPaper();
+    print("object=================main");
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      CCCllok.initializeFqaId();
+      pageToHome();
+    });
   }
 
-  void jumpToNextPaper() async {
-    await Future.delayed(const Duration(seconds: 2));
+  void pageToHome() {
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) =>  MainAccount()),
+        MaterialPageRoute(builder: (context) => const Start()),
         (route) => route == null);
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: Scaffold(
-        body: Container(
+    return Scaffold(
+      body: WillPopScope(
+        onWillPop: () async => false,
+        child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/img_bg_start.webp'),
               fit: BoxFit.cover,
-            ),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  width: 120,
-                  height: 120,
-                  child: Image.asset('assets/start_logo.webp'),
-                ),
-                const Text(
-                  'App Name',
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: Colors.black,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 129),
-                  child: CircularProgressIndicator(color: Color(0xFFF3AA20)),
-                )
-              ],
             ),
           ),
         ),

@@ -1,9 +1,68 @@
+import 'dart:async';
+
+import 'package:every_month_account_books_fly/ad/ShowAdFun.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart'; // 需要先引入 intl 包
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../ad/CCCllok.dart'; // 需要先引入 intl 包
 
 class ThisUtils {
   static int selectedIndex = 1;
+  static ShowAdFun getMobUtils(BuildContext context) {
+    final adManager = Provider.of<ShowAdFun>(context, listen: false);
+    return adManager;
+  }
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static Future<void> showScanAd(
+      BuildContext context,
+      AdWhere adPosition,
+      int moreTime,
+      Function() loadingFun,
+      Function() nextFun,
+      ) async {
+    final Completer<void> completer = Completer<void>();
+    var isCancelled = false;
+
+    void cancel() {
+      isCancelled = true;
+      completer.complete();
+    }
+
+    Future<void> _checkAndShowAd() async {
+      bool colckState = await ShowAdFun.blacklistBlocking();
+      if (colckState) {
+        nextFun();
+        return;
+      }
+      if (!getMobUtils(context).canShowAd(adPosition)) {
+        getMobUtils(context).loadAd(adPosition);
+      }
+
+      if (getMobUtils(context).canShowAd(adPosition)) {
+        loadingFun();
+        getMobUtils(context).showAd(context, adPosition, nextFun);
+        return;
+      }
+      if (!isCancelled) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        await _checkAndShowAd();
+      }
+    }
+
+    Future.delayed( Duration(seconds: moreTime), cancel);
+    await Future.any([
+      _checkAndShowAd(),
+      completer.future,
+    ]);
+
+    if (!completer.isCompleted) {
+      return;
+    }
+    print("插屏广告展示超时");
+    nextFun();
+  }
   static void onItemTapped(int index, BuildContext context) {
     selectedIndex = index;
     // 刷新 MainPage 的状态

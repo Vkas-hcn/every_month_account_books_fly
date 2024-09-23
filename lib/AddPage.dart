@@ -1,3 +1,4 @@
+import 'package:every_month_account_books_fly/ad/ShowAdFun.dart';
 import 'package:every_month_account_books_fly/utils/LocalStorage.dart';
 import 'package:every_month_account_books_fly/utils/ThisUtils.dart';
 import 'package:every_month_account_books_fly/utils/ZhiShou.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'DatePickerBottomSheet.dart';
 import 'NumberInputWidget.dart';
+import 'ad/LoadingOverlay.dart';
 
 class AddPage extends StatelessWidget {
   @override
@@ -24,11 +26,14 @@ class _ToggleButtonExampleState extends State<ToggleButtonExample> {
   int selectedIndex = -1;
 
   String selectedDateText = "";
-
+  final LoadingOverlay _loadingOverlay = LoadingOverlay();
+  late ShowAdFun adManager;
   @override
   void initState() {
     super.initState();
     selectedDateText = ThisUtils.getCurrentDateFormatted();
+    adManager = ThisUtils.getMobUtils(context);
+    adManager.loadAd(AdWhere.SAVE);
     print("selectedDateText===${selectedDateText}");
   }
 
@@ -38,6 +43,24 @@ class _ToggleButtonExampleState extends State<ToggleButtonExample> {
     } else {
       return "shou";
     }
+  }
+  void saveToNextPaper(String num) async {
+    if (!adManager.canShowAd(AdWhere.SAVE)) {
+      adManager.loadAd(AdWhere.SAVE);
+    }
+    setState(() {
+      _loadingOverlay.show(context);
+    });
+    ThisUtils.showScanAd(context, AdWhere.SAVE, 10, () {
+      setState(() {
+        _loadingOverlay.hide();
+      });
+    }, () {
+      setState(() {
+        _loadingOverlay.hide();
+      });
+      addAccountFun(num);
+    });
   }
 
   void addAccountFun(String num) async {
@@ -287,7 +310,7 @@ class _ToggleButtonExampleState extends State<ToggleButtonExample> {
               flex: 4,
               child: NumberInputWidget(
                 onAdd: (value) {
-                  addAccountFun(value);
+                  saveToNextPaper(value);
                 },
                 stateImage: selectedIndex >= 0
                     ? isExpensesSelected

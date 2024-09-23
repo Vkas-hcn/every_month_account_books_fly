@@ -9,7 +9,7 @@ import 'package:every_month_account_books_fly/MainAccount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:every_month_account_books_fly/main.dart';
+import 'package:every_month_account_books_fly/Start.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

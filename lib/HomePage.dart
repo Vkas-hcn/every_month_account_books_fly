@@ -4,7 +4,6 @@ import 'package:every_month_account_books_fly/utils/ZhiShou.dart';
 import 'package:flutter/material.dart';
 
 import 'DatePickerBottomSheet.dart';
-import 'MainAccount.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -26,7 +25,6 @@ class _HomePageShowState extends State<HomePageShow> {
   String totalRevenue = "";
   String budget = "500";
   RecordBean? septemberRecord = null;
-
   @override
   void initState() {
     super.initState();
@@ -401,6 +399,7 @@ class _BillListState extends State<BillList> {
 
     return icons;
   }
+
 
   @override
   Widget build(BuildContext context) {
