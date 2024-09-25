@@ -33,7 +33,11 @@ class ShowAdFun {
   int adLoadTimes = 0;
 
   void loadAd(AdWhere adPosition) async {
-    if (_isAppOpenAdLoading || _isInterstitialAdLoading) {
+    if (adPosition == AdWhere.OPEN && _isAppOpenAdLoading) {
+      print("$adPosition广告加载中");
+      return;
+    }
+    if (adPosition != AdWhere.OPEN  && _isInterstitialAdLoading) {
       print("$adPosition广告加载中");
       return;
     }

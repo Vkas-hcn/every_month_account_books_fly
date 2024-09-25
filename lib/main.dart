@@ -47,7 +47,9 @@ class _MyHomePageState extends State<MyHomePage> {
     print("object=================main");
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final adUtils = Provider.of<CCCllok>(context, listen: false);
       CCCllok.initializeFqaId();
+      adUtils.getBlackList(context);
       pageToHome();
     });
   }
