@@ -28,6 +28,11 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
 
   final List<Widget> _pages = [AddPage(), const HomePage(), BillPage()];
+  void _onItemTapped(int index) {
+    setState(() {
+      ThisUtils.selectedIndex = index;
+    });
+  }
 
   @override
   void initState() {
@@ -45,12 +50,7 @@ class _MainPageState extends State<MainPage> {
         key1: "kd",
         keyValue1: id,
       );
-      print("入参：${requestBody}");
-
-      // 使用 postNetwork 方法发送请求
       final result = await NetworkService.postNetwork(requestBody);
-
-      // 处理请求结果
       if (result.isSuccess) {
         print("请求成功，响应数据：${result.data}");
       } else {

@@ -49,7 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     print("object=================main");
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final adUtils = Provider.of<CCCllok>(context, listen: false);
       CCCllok.initializeFqaId();
@@ -62,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
 // 调用 upPointJson 方法准备请求体
   Future<void> sendRequest() async {
     try {
+      await CCCllok.generateRandomFourDigitNumber();
       String? id = await LocalStorage().getValue(LocalStorage.userID);
       // 准备请求体数据
       final requestBody = await TbaUtils.upPointJson(
@@ -69,7 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
         key1: "kd",
         keyValue1: id,
       );
-      print("入参：${requestBody}");
+      print("object-id-$id");
+      print("入参--：${requestBody}");
 
       // 使用 postNetwork 方法发送请求
       final result = await NetworkService.postNetwork(requestBody);

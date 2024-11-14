@@ -14,48 +14,52 @@ class CCCllok with ChangeNotifier {
       "https://apologia.dailybudget.link/saw/almighty/oedipal";
   static const String TBA_URL =
       "https://test-inboard.honeybudget.net/yogurt/curdle/baja";
+
   static String getUUID() {
     var uuid = Uuid();
     return uuid.v4();
   }
 
-  static void initializeFqaId() async{
-    String? data =await LocalStorage().getValue(LocalStorage.fqaId);
-    String? userID =await LocalStorage().getValue(LocalStorage.userID);
+  static void initializeFqaId() async {
+    String? data = await LocalStorage().getValue(LocalStorage.fqaId);
 
-    if (data==null || data.isEmpty) {
+    if (data == null || data.isEmpty) {
       LocalStorage().setValue(LocalStorage.fqaId, getUUID());
     }
-    if (userID==null || userID.isEmpty) {
-      String Uuuid = getUUID();
-      LocalStorage().setValue(LocalStorage.userID,  Uuuid.substring(0, 4));
+  }
+
+  static generateRandomFourDigitNumber() async {
+    String? userID = await LocalStorage().getValue(LocalStorage.userID);
+    if (userID == null || userID.isEmpty) {
+      final Random random = Random();
+      LocalStorage().setValue(
+          LocalStorage.userID, (random.nextInt(9000) + 1000).toString());
     }
   }
 
   Future<void> getBlackList(BuildContext context) async {
-    String? data =await LocalStorage().getValue(LocalStorage.clockData);
-    print("Blacklist data=${data}");
-
-    if (data != null) {
-      return;
-    }
-    final mapData = await cloakMapData(context);
-    try {
-      final response = await getMapData(BLACK_URL, mapData);
-      LocalStorage().setValue(LocalStorage.clockData,response);
-      notifyListeners();
-    } catch (error) {
-      print("请求出错---》$error");
-    }
+    // String? data = await LocalStorage().getValue(LocalStorage.clockData);
+    // print("Blacklist data=${data}");
+    //
+    // if (data != null) {
+    //   return;
+    // }
+    // final mapData = await cloakMapData(context);
+    // try {
+    //   final response = await getMapData(BLACK_URL, mapData);
+    //   LocalStorage().setValue(LocalStorage.clockData, response);
+    //   notifyListeners();
+    // } catch (error) {
+    //   print("请求出错---》$error");
+    // }
   }
-
 
   Future<Map<String, dynamic>> cloakMapData(BuildContext context) async {
     return {
       "bolton": "com.dailybudget.honey.expensetrack",
       "rwanda": "sick",
       "showmen": await getAppVersion(context),
-      "enrico":  await LocalStorage().getValue(LocalStorage.fqaId),
+      "enrico": await LocalStorage().getValue(LocalStorage.fqaId),
       "dialup": DateTime.now().millisecondsSinceEpoch,
     };
   }
@@ -69,11 +73,11 @@ class CCCllok with ChangeNotifier {
     print("开始请求---${map}");
     final queryParameters = map.entries
         .map((entry) =>
-    '${Uri.encodeComponent(entry.key)}=${Uri.encodeComponent(entry.value.toString())}')
+            '${Uri.encodeComponent(entry.key)}=${Uri.encodeComponent(entry.value.toString())}')
         .join('&');
 
     final urlString =
-    url.contains("?") ? "$url&$queryParameters" : "$url?$queryParameters";
+        url.contains("?") ? "$url&$queryParameters" : "$url?$queryParameters";
     print("object-urlString=${urlString}");
     final response = await http.get(Uri.parse(urlString));
 
@@ -85,6 +89,7 @@ class CCCllok with ChangeNotifier {
       throw HttpException('HTTP error: ${response.statusCode}');
     }
   }
+
   // Future<void> sendPostRequest(Map<String, dynamic> jsonData) async {
   //   // The API endpoint URL
   //   final url = Uri.parse('https://example.com/api/post');

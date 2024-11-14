@@ -62,7 +62,6 @@ class _HomePageShowState extends State<HomePageShow> {
     setState(() {
       septemberRecord = RecordBean.getDataByMonth(nowDate, records);
     });
-    print("object----------${septemberRecord.toString()}");
     getTotalExpenditure();
   }
 
@@ -132,7 +131,6 @@ class _HomePageShowState extends State<HomePageShow> {
                   Spacer(),
                   GestureDetector(
                     onTap: () {
-                      ThisUtils.selectedIndex = 3;
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => Setting()),

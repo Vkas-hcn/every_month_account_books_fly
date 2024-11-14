@@ -44,7 +44,6 @@ class _BillPageState extends State<BillPageExample> {
     setState(() {
       septemberRecord = RecordBean.getDataByMonth(nowDate, records);
     });
-    print("object----------${septemberRecord.toString()}");
     getTotalExpenditure();
     if (septemberRecord != null) {
       stateList = await septemberRecord!.getStateTotalList(selectedDateText.substring(0, 7),type);
