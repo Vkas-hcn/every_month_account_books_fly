@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:every_month_account_books_fly/MainAccount.dart';
 import 'package:every_month_account_books_fly/ad/ShowAdFun.dart';
+import 'package:every_month_account_books_fly/tba/NetworkService.dart';
+import 'package:every_month_account_books_fly/tba/TbaUtils.dart';
 import 'package:every_month_account_books_fly/utils/LocalStorage.dart';
 import 'package:every_month_account_books_fly/utils/ThisUtils.dart';
 import 'package:flutter/material.dart';
@@ -56,11 +58,37 @@ class _MyHomePageState extends State<MyHomePage> {
       initAdData();
     });
   }
+// 调用 upPointJson 方法准备请求体
+  Future<void> sendRequest() async {
+    try {
+      await CCCllok.generateRandomFourDigitNumber();
+      String? id = await LocalStorage().getValue(LocalStorage.userID);
+      // 准备请求体数据
+      final requestBody = await TbaUtils.upPointJson(
+        name: "a_p_op",
+        key1: "kd",
+        keyValue1: id,
+      );
+      print("object-id-$id");
+      print("入参--：${requestBody}");
 
+      // 使用 postNetwork 方法发送请求
+      final result = await NetworkService.postNetwork(requestBody);
+
+      // 处理请求结果
+      if (result.isSuccess) {
+        print("请求成功，响应数据：${result.data}");
+      } else {
+        print("请求失败，错误信息：${result.error}");
+      }
+    } catch (e) {
+      print("请求过程中发生异常：$e");
+    }
+  }
   void initAdData() async {
     final adUtils = Provider.of<CCCllok>(context, listen: false);
     adUtils.getBlackList(context);
-    print("引导页加载广告");
+    sendRequest();
     adManager.loadAd(AdWhere.OPENINT);
     adManager.loadAd(AdWhere.SAVE);
     Future.delayed(const Duration(seconds: 1), () {

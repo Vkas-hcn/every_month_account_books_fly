@@ -198,7 +198,7 @@ class Setting extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            userid ?? 'Loading...',
+                            "User id: $userid" ?? 'Loading...',
                             style: const TextStyle(
                               color: Color(0xFFAFAEAE),
                               fontSize: 14,
@@ -209,13 +209,13 @@ class Setting extends StatelessWidget {
                             '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}',
                             style: const TextStyle(
                               color: Color(0xFFAFAEAE),
-                              fontSize: 14,
+                              fontSize: 12,
                             ),
                           )
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20)
+                    const SizedBox(height: 40)
                   ],
                 );
               }
