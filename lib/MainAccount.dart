@@ -1,4 +1,7 @@
 import 'package:every_month_account_books_fly/Setting.dart';
+import 'package:every_month_account_books_fly/tba/NetworkService.dart';
+import 'package:every_month_account_books_fly/tba/TbaUtils.dart';
+import 'package:every_month_account_books_fly/utils/LocalStorage.dart';
 import 'package:every_month_account_books_fly/utils/ThisUtils.dart';
 import 'package:flutter/material.dart';
 import 'AddPage.dart';
@@ -26,10 +29,36 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _pages = [AddPage(), const HomePage(), BillPage()];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      ThisUtils.selectedIndex = index;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      sendRequest();
     });
+  }
+
+  Future<void> sendRequest() async {
+    try {
+      String? id = await LocalStorage().getValue(LocalStorage.userID);
+      final requestBody = await TbaUtils.upPointJson(
+        name: "a_p_hm",
+        key1: "kd",
+        keyValue1: id,
+      );
+      print("入参：${requestBody}");
+
+      // 使用 postNetwork 方法发送请求
+      final result = await NetworkService.postNetwork(requestBody);
+
+      // 处理请求结果
+      if (result.isSuccess) {
+        print("请求成功，响应数据：${result.data}");
+      } else {
+        print("请求失败，错误信息：${result.error}");
+      }
+    } catch (e) {
+      print("请求过程中发生异常：$e");
+    }
   }
   void refresh() {
     print("refresh");

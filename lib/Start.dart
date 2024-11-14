@@ -68,11 +68,20 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void showOpenAd() {
+  void showOpenAd() async {
     int elapsed = 0;
     const int timeout = 10000;
     const int interval = 500;
     print("准备展示open广告");
+    bool colckState = await ShowAdFun.blacklistBlocking();
+    if (colckState) {
+      //等待2秒后执行
+      Future.delayed(const Duration(seconds: 2), () {
+        print("直接进入首页");
+        jumpToNextPaper();
+      });
+      return;
+    }
     Timer.periodic(const Duration(milliseconds: interval), (timer) {
       elapsed += interval;
       if (adManager.canShowAd(AdWhere.OPENINT)) {
@@ -97,10 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
     print("应用恢复前台");
     if (_pausedTime != null) {
       final timeInBackground =
-          DateTime
-              .now()
-              .difference(_pausedTime!)
-              .inSeconds;
+          DateTime.now().difference(_pausedTime!).inSeconds;
       if (LocalStorage.clone_ad == true) {
         return;
       }
@@ -125,13 +131,13 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => MainAccount()),
-            (route) => route == null);
+        (route) => route == null);
   }
 
   void restartApp() {
     ThisUtils.navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const Start()),
-          (route) => false,
+      (route) => false,
     );
   }
 
@@ -173,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     const Padding(
                       padding: EdgeInsets.only(top: 129),
                       child:
-                      CircularProgressIndicator(color: Color(0xFFF3AA20)),
+                          CircularProgressIndicator(color: Color(0xFFF3AA20)),
                     )
                   ],
                 ),

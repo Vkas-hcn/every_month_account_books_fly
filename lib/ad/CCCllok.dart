@@ -12,16 +12,23 @@ import 'package:http/http.dart' as http;
 class CCCllok with ChangeNotifier {
   static const String BLACK_URL =
       "https://apologia.dailybudget.link/saw/almighty/oedipal";
-  static String fqaId = "";
-
+  static const String TBA_URL =
+      "https://test-inboard.honeybudget.net/yogurt/curdle/baja";
   static String getUUID() {
     var uuid = Uuid();
     return uuid.v4();
   }
 
-  static void initializeFqaId() {
-    if (fqaId.isEmpty) {
-      fqaId = getUUID();
+  static void initializeFqaId() async{
+    String? data =await LocalStorage().getValue(LocalStorage.fqaId);
+    String? userID =await LocalStorage().getValue(LocalStorage.userID);
+
+    if (data==null || data.isEmpty) {
+      LocalStorage().setValue(LocalStorage.fqaId, getUUID());
+    }
+    if (userID==null || userID.isEmpty) {
+      String Uuuid = getUUID();
+      LocalStorage().setValue(LocalStorage.userID,  Uuuid.substring(0, 4));
     }
   }
 
@@ -48,7 +55,7 @@ class CCCllok with ChangeNotifier {
       "bolton": "com.dailybudget.honey.expensetrack",
       "rwanda": "sick",
       "showmen": await getAppVersion(context),
-      "enrico": fqaId,
+      "enrico":  await LocalStorage().getValue(LocalStorage.fqaId),
       "dialup": DateTime.now().millisecondsSinceEpoch,
     };
   }
@@ -75,7 +82,6 @@ class CCCllok with ChangeNotifier {
       return response.body;
     } else {
       print("请求出错：HTTP error: ${response.statusCode}");
-
       throw HttpException('HTTP error: ${response.statusCode}');
     }
   }

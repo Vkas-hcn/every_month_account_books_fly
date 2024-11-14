@@ -50,9 +50,7 @@ class ShowAdFun {
       return;
     }
     bool colckState = await blacklistBlocking();
-    if (adPosition != AdWhere.OPEN &&
-        adPosition != AdWhere.OPENINT &&
-        colckState) {
+    if (colckState) {
       print("$adPosition广告黑名单屏蔽");
       return;
     }
@@ -274,6 +272,7 @@ class ShowAdFun {
   }
 
   static Future<bool> blacklistBlocking() async {
+    return true;
     String? data = await LocalStorage().getValue(LocalStorage.clockData);
     if (data != "graph") {
       return true;

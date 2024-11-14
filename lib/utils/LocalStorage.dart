@@ -3,6 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocalStorage {
   static const accountJson = 'account_json_key';
   static String clockData = "clockData";
+  static String fqaId = "fqaId";
+  static String userID = "userID";
+
   static bool isInBack = false;
   static bool int_ad_show = false;
   static bool clone_ad = false;
